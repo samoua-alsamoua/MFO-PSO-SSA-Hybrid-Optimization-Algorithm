@@ -1,0 +1,25 @@
+function [mssim] = getMSSIM(image, test)
+    C1 = 6.5025;
+    C2 = 58.5225;
+    image = double(image);
+    test = double(test);
+    image_2 = image .^ 2;
+    test_2 = test .^ 2;
+    image_test = image .* test;
+    mu1 = imgaussfilt(image, 1.5);
+    mu2 = imgaussfilt(test, 1.5);
+    mu1_2 = mu1 .^ 2;
+    mu2_2 = mu2 .^ 2;
+    mu1_mu2 = mu1 .* mu2;
+    sigma1_2 = imgaussfilt(image_2, 1.5);
+    sigma1_2 = sigma1_2 - mu1_2;
+    sigma2_2 = imgaussfilt(test_2, 1.5);
+    sigma2_2 = sigma2_2 - mu2_2;
+    sigma12 = imgaussfilt(image_test, 1.5);
+    sigma12 = sigma12 - mu1_mu2;
+    t3 = ((2*mu1_mu2 + C1) .* (2 * sigma12 + C2));
+    t1 =((mu1_2 + mu2_2 + C1) .* (sigma1_2 + sigma2_2 + C2));
+    ssim_map = t3 ./ t1;
+    mssim = mean2(ssim_map);
+    mssim = mean(mssim(:));
+end
